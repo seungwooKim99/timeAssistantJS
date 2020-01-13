@@ -1,5 +1,11 @@
+const calendar = document.querySelector("calendar");
+
+function loadCalendar(){
+    
+}
+
 function init(){
-    LoadCalendar();
+    loadCalendar();
 }
 
 init();

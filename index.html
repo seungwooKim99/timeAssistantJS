@@ -7,13 +7,32 @@
 </head>
 
 <body>
-    <div id="weekCalendar" class="weekCalendar"></div>
+    <div class="container">
+        <div class="calendar-box">
+            <div class="top-row">
+                <button type="button" ttle="prev" class="btn-cal prev"></button>
+                <span class="cal-month"></span>
+                <span class="cal-year"></span>
+                <button type="button" ttle="next" class="btn-cal next"></button>
+            </div>
+            <table class="cal-table">
+                <thead>
+
+                    <tr>
+                        <th>S</th>
+                        <th>M</th>
+                        <th>T</th>
+                        <th>W</th>
+                        <th>T</th>
+                        <th>F</th>
+                        <th>S</th>
+                    </tr>
+                </thead>
+                <tbody class="cal-body"></tbody>
+            </table>
+        </div>
+    </div>
     
-    <form class="userList">
-        <input class="user1" type="radio" name = "selectUser" value="user1">user1
-        <input class="user2"type="radio" name = "selectUser" value="user2">user2
-        <input class="user3" type="radio" name = "selectUser" value="user3">user3
-    </form>
-    <script src='calendarProtoType.js'></script>
+    <script src='app.js'></script>
 </body>
 </html>

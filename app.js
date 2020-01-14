@@ -34,6 +34,7 @@ function loadYearAndMonth(day){
 }
 
 function loadDays(date){
+    console.log(date);
     var str='';
     var index=0;
     var dayCountIndex=0;
@@ -44,7 +45,7 @@ function loadDays(date){
     let firstDay = calInit.getFirstDay(currYear, currMonth);
     let LastDay = calInit.getLastDay(currYear, currMonth);
 
-
+ 
     for(var i = 0 ; i < 7 ; i++){
         str += '<tr>';
         for(var j = 0; j < 7 ; j++){
@@ -68,15 +69,15 @@ function loadDays(date){
 
 }
 
-function loadCalendar(){
-    loadYearAndMonth(calInit.today);
-    loadDays(calInit.newDate);
+function loadCalendar(date){
+    loadYearAndMonth(date);
+    loadDays(date);
 }
 
 function init(){
-    loadCalendar();
-    btnNext.addEventListener('click', ()=>loadYearAndMonth(calInit.nextMonth()));
-    btnPrev.addEventListener('click', ()=>loadYearAndMonth(calInit.prevMonth()));
+    loadCalendar(calInit.today);
+    btnNext.addEventListener('click', ()=>loadCalendar(calInit.nextMonth()));
+    btnPrev.addEventListener('click', ()=>loadCalendar(calInit.prevMonth()));
 }
 
 init();

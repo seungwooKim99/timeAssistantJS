@@ -3,6 +3,9 @@ const calBody = document.querySelector(".cal-body");
 
 const btnNext = document.querySelector(".btn-cal.next");
 const btnPrev = document.querySelector(".btn-cal.prev");
+const btnAdd = document.querySelector(".btn-menu.add");
+
+const showUserList = document.querySelector(".show-user-list");
 
 const calInit = {
     monList: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -27,6 +30,14 @@ const calInit = {
         return date;
     },
 };
+function createUserInfo(){
+    this.id = 0;
+    this.selectedFirstDay = new Date();
+    this.selectedSecondDay = new Date();
+}
+
+var userList= [];
+var userNumber = 0;
 
 function loadYearAndMonth(day){
     document.querySelector('.cal-month').textContent = calInit.monList[day.getMonth()];
@@ -74,10 +85,26 @@ function loadCalendar(date){
     loadDays(date);
 }
 
+function showUsers(){
+    var str = '<td class="user">';
+    str += `User${userNumber} </td>`;
+    showUserList.innerHTML = str;
+}
+
+function addUsers(){
+    var user = new createUserInfo();
+    user.id = ++userNumber;
+    userList.push(user)
+
+    showUsers();
+    //console.log(userList);
+}
+
 function init(){
     loadCalendar(calInit.today);
     btnNext.addEventListener('click', ()=>loadCalendar(calInit.nextMonth()));
     btnPrev.addEventListener('click', ()=>loadCalendar(calInit.prevMonth()));
+    btnAdd.addEventListener('click', addUsers);
 }
 
 init();

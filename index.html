@@ -10,10 +10,10 @@
     <div class="container">
         <div class="calendar-box">
             <div class="top-row">
-                <button type="button" ttle="prev" class="btn-cal prev"></button>
+                <button type="button" title="prev" class="btn-cal prev">prev</button>
                 <span class="cal-month"></span>
                 <span class="cal-year"></span>
-                <button type="button" ttle="next" class="btn-cal next"></button>
+                <button type="button" title="next" class="btn-cal next">next</button>
             </div>
             <table class="cal-table">
                 <thead>
@@ -30,6 +30,16 @@
                 </thead>
                 <tbody class="cal-body"></tbody>
             </table>
+        </div>
+        <div class="menu-box">
+            <button type="button" class="btn-menu add">+</button>
+            <button type="button" class="btn-menu ok" disabled="true">OK</button>
+            <table class="user-list">
+                <tr class="show-user-list">
+                </tr>
+            </table>
+            <div class="show-user-list"></div>
+            
         </div>
     </div>
     

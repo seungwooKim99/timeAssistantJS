@@ -7,13 +7,9 @@ const btnAdd = document.querySelector(".btn-menu.add");
 const btnOk = document.querySelector(".btn-menu.ok");
 
 const inputUserNum = document.querySelector(".input.user-number");
-const messageBox = document.querySelector(".message-box");
+
 const showUserList = document.querySelector(".show-user-list");
 
-var days = null;
-var users = null;
-var currYear = null;
-var currMonth = null;
 
 const calInit = {
     monList: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -49,8 +45,8 @@ var userListForMatching = [];
 var userNumber = 0;
 
 function loadYearAndMonth(day){
-    currMonth = document.querySelector('.cal-month').textContent = calInit.monList[day.getMonth()];
-    currYear = document.querySelector('.cal-year').textContent = day.getFullYear();
+    document.querySelector('.cal-month').textContent = calInit.monList[day.getMonth()];
+    document.querySelector('.cal-year').textContent = day.getFullYear();
 }
 
 function loadDays(date){
@@ -92,19 +88,18 @@ function loadDays(date){
 function loadCalendar(date){
     loadYearAndMonth(date);
     loadDays(date);
-    days = document.getElementsByClassName("day");
 }
 
 function showUsers(){
     var str = '';
     for(var i = 0; i <userNumber;i++){
-        str += `<td class="userNum num${i+1}">User${i+1}</td>`;
+        str += `<td class="user num${i+1}">User${i+1}</td>`;
     }
     showUserList.innerHTML = str;
 }
 
 function showUserNumber(){
-    //console.log(inputUserNum);
+    console.log(inputUserNum);
     inputUserNum.value = userNumber;
 }
 
@@ -115,49 +110,26 @@ function addUsers(){
 
     btnOk.disabled = false;
     showUserNumber();
+    //showUsers();
+    //console.log(userList);
 }
 
-function userBgColorRefresh(){
-    for(var i = 0; i <userNumber ; i++){
-        users[i].style.backgroundColor = 'darksalmon';
-    }
-}
-
-function handleUserClick(event){
-    userBgColorRefresh();
-    const userNumber = event.target.cellIndex;
-    //console.log(event);
-    event.target.style.backgroundColor = 'dodgerblue';
-    messageBox.innerHTML = `User${userNumber+1} selected. Click the possible days!`;
-
-
-}
-
-function handleDayClick(day){
-    var str = "";
-    str += `${currYear} ${currMonth} ${day.target.innerText}`;
-    console.log(str);
-    //console.log(day.target.innerText);
+function a(){
+    console.log("hi");
 }
 
 function afterPressOk(){
     showUsers();
-    users = document.getElementsByClassName("userNum");
-    //console.log(users);
-
-    Array.from(users).forEach(user =>
-        user.style.backgroundColor = 'darksalmon'  
-      );
-
-    Array.from(users).forEach(user =>
-      user.addEventListener("click", handleUserClick)  
-    );
-
-    Array.from(days).forEach(day =>
-      day.addEventListener("click", handleDayClick)  
-    );
+    for(var i=0;i<userNumber;i++){
+    
+    }
+    //console.log(userList);
+    
 }
 
+function a(){
+    console.log("HI");
+}
 
 function init(){
     loadCalendar(calInit.today);

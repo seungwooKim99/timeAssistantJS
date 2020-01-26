@@ -15,6 +15,9 @@ var users = null;
 var currYear = null;
 var currMonth = null;
 
+var currMonthId = null;
+//for handleDayClick
+
 const calInit = {
     monList: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     dayList: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -40,15 +43,24 @@ const calInit = {
 };
 function createUserInfo(){
     this.id = 0;
-    this.selectedFirstDay = new Date();
-    this.selectedSecondDay = new Date();
+    this.fY = 0;
+    this.fM = 0;
+    this.fD = 0;
+    this.sY = 0;
+    this.sM = 0;
+    this.sD = 0;
+    this.ifSelected = false;
 }
 
 var userList= [];
 var userListForMatching = [];
 var userNumber = 0;
 
+var selectedUserNumberFlag = -1;
+var ifFirstDaySelected = false;
+
 function loadYearAndMonth(day){
+    currMonthId = day.getMonth();
     currMonth = document.querySelector('.cal-month').textContent = calInit.monList[day.getMonth()];
     currYear = document.querySelector('.cal-year').textContent = day.getFullYear();
 }
@@ -93,6 +105,13 @@ function loadCalendar(date){
     loadYearAndMonth(date);
     loadDays(date);
     days = document.getElementsByClassName("day");
+
+    /*
+    Array.from function has reused to refresh the new month data
+    */
+    Array.from(days).forEach(day =>
+        day.addEventListener("click", handleDayClick)  
+      );
 }
 
 function showUsers(){
@@ -130,14 +149,50 @@ function handleUserClick(event){
     event.target.style.backgroundColor = 'dodgerblue';
     messageBox.innerHTML = `User${userNumber+1} selected. Click the possible days!`;
 
+    selectedUserNumberFlag = userNumber;
+    /*
+    Process to save possible days(two days)
+    */
+   //userList[userNumber].selectedFirstDay = 
+   
+    
 
 }
 
+function checkIfAllSelected(){
+    for(var i = 0;i<userNumber;i++){
+        if(userList[i].ifSelected === false){
+            return false;
+        }
+    }
+    return true;
+}
+
 function handleDayClick(day){
+    console.log(day);
+    day.target.className += ' clicked';
     var str = "";
     str += `${currYear} ${currMonth} ${day.target.innerText}`;
     console.log(str);
     //console.log(day.target.innerText);
+    if(selectedUserNumberFlag != -1 && ifFirstDaySelected === false){
+        userList[selectedUserNumberFlag].fY = currYear;
+        userList[selectedUserNumberFlag].fM = currMonthId;
+        userList[selectedUserNumberFlag].fD = day.target.innerText;
+        ifFirstDaySelected = true;
+    }
+    else if(ifFirstDaySelected === true){
+        userList[selectedUserNumberFlag].sY = currYear;
+        userList[selectedUserNumberFlag].sM = currMonthId;
+        userList[selectedUserNumberFlag].sD = day.target.innerText;
+        ifFirstDaySelected = false;
+        userList[selectedUserNumberFlag].ifSelected = true;
+
+        var ifAllSelected = checkIfAllSelected();
+        if(ifAllSelected === true){
+            /*Calculate the possible days and finish the process*/ 
+        }
+    }
 }
 
 function afterPressOk(){
@@ -154,8 +209,9 @@ function afterPressOk(){
     );
 
     Array.from(days).forEach(day =>
-      day.addEventListener("click", handleDayClick)  
-    );
+        day.addEventListener("click", handleDayClick)  
+      );
+    
 }
 
 

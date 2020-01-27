@@ -4,3 +4,6 @@
 .day{
     cursor: pointer;
 }
+.day.clicked{
+    background-color: palegreen;
+}

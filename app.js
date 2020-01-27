@@ -5,10 +5,15 @@ const btnNext = document.querySelector(".btn-cal.next");
 const btnPrev = document.querySelector(".btn-cal.prev");
 const btnAdd = document.querySelector(".btn-menu.add");
 const btnOk = document.querySelector(".btn-menu.ok");
+const btnResult = document.querySelector(".result");
+const showResult = document.querySelector(".show-result");
 
 const inputUserNum = document.querySelector(".input.user-number");
 const messageBox = document.querySelector(".message-box");
 const showUserList = document.querySelector(".show-user-list");
+
+/*Array about selected Days*/
+var dayArr = [[],[]];
 
 var days = null;
 var users = null;
@@ -41,6 +46,67 @@ const calInit = {
         return date;
     },
 };
+
+function monthIntoDay(month){
+    parseInt(month);
+    switch(month){
+        case 0:
+            month = 0;
+            break;
+        case 1:
+            month = 31;
+            break;
+        case 2:
+            month = 31 + 28;
+            break;
+        case 3:
+            month = 31 + 28 + 31;
+            break;
+       case 4:
+            month = 31 + 28 + 31 + 30;
+            break;
+        case 5:
+            month = 31 + 28 + 31 + 30 + 31;
+            break;
+        case 6:
+            month = 31 + 28 + 31 + 30 + 31 + 30;
+            break;
+        case 7:
+            month = 31 + 28 + 31 + 30 + 31 + 30 + 31;
+            break;
+        case 8:
+            month = 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31;
+            break;
+        case 9:
+            month = 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30;
+            break;
+        case 10:
+            month = 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31;
+            break;
+        case 11:
+            month = 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30;
+            break;
+    }
+    return month;
+}
+
+function simplifyDay(user){
+    /* Make selected Date into day (ex. 2020 Feb 5 equals (2020 - 2020) + 31 + 5 = 36)*/
+    var resultDay = parseInt(user.fY);
+    resultDay = 365*(resultDay - 2020);
+    resultDay += monthIntoDay(user.fM);
+    resultDay += parseInt(user.fD);
+    user.fSimpleDay = resultDay;
+    dayArr[0].push(resultDay);
+
+    var resultDay2 = parseInt(user.sY);
+    resultDay2  = 365*(resultDay2 - 2020);
+    resultDay2 += monthIntoDay(user.sM);
+    resultDay2 += parseInt(user.sD);
+    user.sSimpleDay = resultDay2;
+    dayArr[1].push(resultDay2);
+}
+
 function createUserInfo(){
     this.id = 0;
     this.fY = 0;
@@ -50,6 +116,8 @@ function createUserInfo(){
     this.sM = 0;
     this.sD = 0;
     this.ifSelected = false;
+    this.fSimpleDay = 0;
+    this.sSimpleDay = 0;
 }
 
 var userList= [];
@@ -168,9 +236,78 @@ function checkIfAllSelected(){
     return true;
 }
 
+function sortUpperCase(){
+    for(var i=0;i<userNumber;i++){
+        var tmp = i;
+        for(var j = i;j<userNumber;j++){
+            if(dayArr[0][tmp]>=dayArr[0][j]){
+                tmp = j;
+            }
+        }
+        var tmpVar = dayArr[0][i];
+            dayArr[0][i] = dayArr[0][tmp];
+            dayArr[0][tmp] = tmpVar;
+
+            tmpVar = dayArr[1][i];
+            dayArr[1][i] = dayArr[1][tmp];
+            dayArr[1][tmp] = tmpVar;
+    }
+}
+
+function calculateResult(){
+    Array.from(userList).forEach(user =>
+        simplifyDay(user)
+    );
+    /*Sort with Upper Case and Calculate the Result */
+    sortUpperCase();
+
+    var impossible = false;
+    var tmp;
+    var start = dayArr[0][0];
+    var finish = dayArr[1][0];
+    for(var i = 0 ; i < userNumber ; i++){
+        if(dayArr[0][i] > finish){
+            impossible = true;
+            break;
+        }
+        else{
+            if(finish>dayArr[1][i]){
+                finish = dayArr[1][i];
+            }
+            start = dayArr[0][i];
+        }
+    }
+    if(!impossible){
+        /* Show the Result*/
+        var startIndex = 0;
+        var finishIndex = 0;
+        for(var i = 0 ; i < userNumber ; i++){
+            if(userList[i].fSimpleDay === start){
+                startIndex = i;
+            }
+        }
+        for(var i = 0 ; i < userNumber ; i++){
+            if(userList[i].sSimpleDay === finish){
+                finishIndex = i;
+            }
+        }
+        showResult.innerHTML = `From ${userList[startIndex].fY}-${calInit.monList[userList[startIndex].fM]}-${userList[startIndex].fD}
+         To ${userList[finishIndex].sY}-${calInit.monList[userList[finishIndex].sM]}-${userList[finishIndex].sD}`;
+    }
+    else{
+        showResult.innerHTML = `No Matching Day!`;
+    }
+}
+
 function handleDayClick(day){
     console.log(day);
-    day.target.className += ' clicked';
+    if(day.target.classList.contains('clicked')){
+
+    }
+    else{
+        day.target.classList.add('clicked');
+    }
+    //day.target.className += ' clicked';
     var str = "";
     str += `${currYear} ${currMonth} ${day.target.innerText}`;
     console.log(str);
@@ -190,6 +327,8 @@ function handleDayClick(day){
 
         var ifAllSelected = checkIfAllSelected();
         if(ifAllSelected === true){
+            btnResult.disabled = false;
+            btnResult.addEventListener('click', calculateResult);
             /*Calculate the possible days and finish the process*/ 
         }
     }

@@ -185,6 +185,7 @@ function loadCalendar(date){
 function showUsers(){
     var str = '';
     for(var i = 0; i <userNumber;i++){
+        console.log(i);
         str += `<td class="userNum num${i+1}">User${i+1}</td>`;
     }
     showUserList.innerHTML = str;
@@ -198,7 +199,7 @@ function showUserNumber(){
 function addUsers(){
     var user = new createUserInfo();
     user.id = ++userNumber;
-    userList.push(user)
+    userList.push(user);
 
     btnOk.disabled = false;
     showUserNumber();
@@ -388,7 +389,8 @@ function init(){
     btnNext.addEventListener('click', ()=>loadCalendar(calInit.nextMonth()));
     btnPrev.addEventListener('click', ()=>loadCalendar(calInit.prevMonth()));
     btnAdd.addEventListener('click', addUsers);
-    btnOk.addEventListener('click', afterPressOk);
+    btnOk.addEventListener('click', afterPressOk);   
 }
 
 init();
+

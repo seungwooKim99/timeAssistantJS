@@ -254,10 +254,39 @@ function sortUpperCase(){
     }
 }
 
+function swap(){
+    for(var i = 0 ; i < userNumber ; i++){
+        if(dayArr[0][i]>dayArr[1][i]){
+            var temp = dayArr[0][i];
+            dayArr[0][i] = dayArr[1][i];
+            dayArr[1][i] = temp;
+
+            temp = userList[i].fY;
+            userList[i].fY = userList[i].sY;
+            userList[i].sY = temp;
+
+            temp = userList[i].fM;
+            userList[i].fM = userList[i].sM;
+            userList[i].sM = temp;
+
+            temp = userList[i].fD;
+            userList[i].fD = userList[i].sD;
+            userList[i].sD = temp;
+
+            temp = userList[i].fSimpleDay;
+            userList[i].fSimpleDay = userList[i].sSimpleDay;
+            userList[i].sSimpleDay = temp;
+        }
+    }
+}
+
 function calculateResult(){
     Array.from(userList).forEach(user =>
         simplifyDay(user)
     );
+     /* Swap checked two days if two days are not in correct order*/
+    swap();
+
     /*Sort with Upper Case and Calculate the Result */
     sortUpperCase();
 

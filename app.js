@@ -10,15 +10,19 @@ const showResult = document.querySelector(".show-result");
 
 const inputUserNum = document.querySelector(".input.user-number");
 const messageBox = document.querySelector(".message-box");
-const showUserList = document.querySelector(".show-user-list");
+const showUserList = document.querySelector(".user-list");
 
 /*Array about selected Days*/
 var dayArr = [[],[]];
 
+var afterPressOkFlag = false;
 var days = null;
 var users = null;
 var currYear = null;
 var currMonth = null;
+
+var activeFlag1 = null;
+var activeFlag2 = null;
 
 var currMonthId = null;
 //for handleDayClick
@@ -118,6 +122,9 @@ function createUserInfo(){
     this.ifSelected = false;
     this.fSimpleDay = 0;
     this.sSimpleDay = 0;
+
+    this.firstActiveFlag = null;
+    this.secondActiveFlag = null;
 }
 
 var userList= [];
@@ -164,9 +171,7 @@ function loadDays(date){
             
         }
     }
-
     calBody.innerHTML = str;
-
 }
 
 function loadCalendar(date){
@@ -174,25 +179,41 @@ function loadCalendar(date){
     loadDays(date);
     days = document.getElementsByClassName("day");
 
-    /*
-    Array.from function has reused to refresh the new month data
-    */
-    Array.from(days).forEach(day =>
-        day.addEventListener("click", handleDayClick)  
-      );
+    /*refresh */
+    if(selectedUserNumberFlag != -1){
+        Array.from(days).forEach(day =>{
+            refreshDayColor(day);
+        });
+
+        if(userList[selectedUserNumberFlag].firstActiveFlag){
+            userList[selectedUserNumberFlag].firstActiveFlag.classList.add('clicked');
+        }
+        if(userList[selectedUserNumberFlag].secondActiveFlag){
+            userList[selectedUserNumberFlag].secondActiveFlag.classList.add('clicked');
+        }
+
+        Array.from(days).forEach(day =>{
+            day.addEventListener("click", handleDayClick);
+        });
+    }
+
 }
 
 function showUsers(){
-    var str = '';
+    var str = '<tr class="0">';
     for(var i = 0; i <userNumber;i++){
-        console.log(i);
-        str += `<td class="userNum num${i+1}">User${i+1}</td>`;
+        
+        if(i != 0 && i%5 === 0){
+            str += `</tr>`;
+            str += `<tr class="${i/5}">`;
+        }
+        str += `<td class="userNum num${i+1} ${i+1}">User${i+1}</td>`;
     }
+    str += `</tr>`
     showUserList.innerHTML = str;
 }
 
 function showUserNumber(){
-    //console.log(inputUserNum);
     inputUserNum.value = userNumber;
 }
 
@@ -207,25 +228,42 @@ function addUsers(){
 
 function userBgColorRefresh(){
     for(var i = 0; i <userNumber ; i++){
-        users[i].style.backgroundColor = 'darksalmon';
+        users[i].style.backgroundColor = 'floralwhite';
+    }
+}
+
+function refreshDayColor(day){
+    if(day.className === 'day clicked'){
+        day.className = 'day';
+        console.log(day);
     }
 }
 
 function handleUserClick(event){
     userBgColorRefresh();
-    const userNumber = event.target.cellIndex;
-    //console.log(event);
-    event.target.style.backgroundColor = 'dodgerblue';
-    messageBox.innerHTML = `User${userNumber+1} selected. Click the possible days!`;
+    const userNumber = parseInt(event.target.classList[2]) - 1;
 
     selectedUserNumberFlag = userNumber;
-    /*
-    Process to save possible days(two days)
-    */
-   //userList[userNumber].selectedFirstDay = 
-   
-    
+    //console.log(event);
+    event.target.style.backgroundColor = 'skyblue';
+    messageBox.innerHTML = `User${userNumber+1} selected. Click the possible days!`;
 
+    if(selectedUserNumberFlag != -1){
+        Array.from(days).forEach(day =>{
+            refreshDayColor(day);
+        });
+
+        if(userList[selectedUserNumberFlag].firstActiveFlag){
+            userList[selectedUserNumberFlag].firstActiveFlag.classList.add('clicked');
+        }
+        if(userList[selectedUserNumberFlag].secondActiveFlag){
+            userList[selectedUserNumberFlag].secondActiveFlag.classList.add('clicked');
+        }
+
+        Array.from(days).forEach(day =>{
+            day.addEventListener("click", handleDayClick);
+        });
+    }
 }
 
 function checkIfAllSelected(){
@@ -321,22 +359,44 @@ function calculateResult(){
                 finishIndex = i;
             }
         }
-        showResult.innerHTML = `From ${userList[startIndex].fY}-${calInit.monList[userList[startIndex].fM]}-${userList[startIndex].fD}
-         To ${userList[finishIndex].sY}-${calInit.monList[userList[finishIndex].sM]}-${userList[finishIndex].sD}`;
+        showResult.innerHTML = `<span class='from'>From</span> <span class='mainText'>${calInit.monList[userList[startIndex].fM]} ${userList[startIndex].fD}, ${userList[startIndex].fY}</span>
+         <span class='to'>To</span> <span class='mainText'>${calInit.monList[userList[finishIndex].sM]} ${userList[finishIndex].sD}, ${userList[finishIndex].sY}</span>`;
     }
     else{
         showResult.innerHTML = `No Matching Day!`;
     }
 }
 
-function handleDayClick(day){
-    console.log(day);
-    if(day.target.classList.contains('clicked')){
 
+function handleDayClick(day){
+    if(afterPressOkFlag){
+        if(day.target.classList.contains('clicked')){
+            
+        }
+        else{
+            if(!userList[selectedUserNumberFlag].firstActiveFlag && !userList[selectedUserNumberFlag].secondActiveFlag){
+                day.target.classList.add('clicked');
+                activeFlag1 = day.target;
+                userList[selectedUserNumberFlag].firstActiveFlag = activeFlag1;
+            }
+            else if(!userList[selectedUserNumberFlag].secondActiveFlag){
+                day.target.classList.add('clicked');
+                activeFlag2 = day.target;
+                userList[selectedUserNumberFlag].secondActiveFlag = activeFlag2;
+            }
+            else{
+                day.target.classList.add('clicked');
+                var del = userList[selectedUserNumberFlag].firstActiveFlag;
+                activeFlag1 = userList[selectedUserNumberFlag].secondActiveFlag;
+                activeFlag2 = day.target;
+                del.classList.remove('clicked');
+
+                userList[selectedUserNumberFlag].firstActiveFlag = activeFlag1;
+                userList[selectedUserNumberFlag].secondActiveFlag = activeFlag2;
+            }
+        }
     }
-    else{
-        day.target.classList.add('clicked');
-    }
+
     //day.target.className += ' clicked';
     var str = "";
     str += `${currYear} ${currMonth} ${day.target.innerText}`;
@@ -366,20 +426,19 @@ function handleDayClick(day){
 
 function afterPressOk(){
     showUsers();
+    afterPressOkFlag = true;
     users = document.getElementsByClassName("userNum");
+    console.log(users);
     //console.log(users);
 
+    /*
     Array.from(users).forEach(user =>
         user.style.backgroundColor = 'darksalmon'  
       );
-
+        */
     Array.from(users).forEach(user =>
       user.addEventListener("click", handleUserClick)  
     );
-
-    Array.from(days).forEach(day =>
-        day.addEventListener("click", handleDayClick)  
-      );
     
 }
 
@@ -393,4 +452,3 @@ function init(){
 }
 
 init();
-
